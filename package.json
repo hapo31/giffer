@@ -1,0 +1,26 @@
+{
+  "name": "giffer-slack",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "happou31 <happo31@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start":
+      "webpack --watch --mode development --entry './src' --output dist/app.js --module-bind 'ts=ts-loader' --module-bind 'tsx=ts-loader' --resolve-extensions .ts,.tsx,.js",
+    "server": "ts-node server.ts"
+  },
+  "dependencies": {
+    "jsgif": "^1.0.2",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "tslib": "^1.9.0"
+  },
+  "devDependencies": {
+    "@types/react": "^16.0.40",
+    "@types/react-dom": "^16.0.4",
+    "ts-loader": "^4.1.0",
+    "ts-node": "^5.0.1",
+    "typescript": "^2.7.2",
+    "webpack": "^4.2.0"
+  }
+}

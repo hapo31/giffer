@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "jsx": "react",
+        "strict": true,
+        "noEmitHelpers": true,
+        "importHelpers": true
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}
