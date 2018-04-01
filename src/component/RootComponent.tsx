@@ -1,6 +1,7 @@
 import * as React from "react";
 import GifViewer from "./GifViewer";
 import { GifViewerState } from "../State/GifViewer";
+import { PassExtensions } from "../constants/AllowExtensions";
 
 export type RootState = {
   gifViewer: GifViewerState;
@@ -27,12 +28,16 @@ export class RootComponent extends React.Component<{}, RootState> {
   }
 
   private onChangeFile = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    const gifViewer = this.state.gifViewer;
+    if (
+      !ev.target.files ||
+      !PassExtensions(ev.target.value.toLocaleLowerCase())
+    ) {
+      return;
+    }
+    const gifViewer = Object.assign({}, this.state.gifViewer);
     gifViewer.srcList.push(URL.createObjectURL(ev.target.files!.item(0)));
     gifViewer.delay = 10;
     gifViewer.repeat = 0;
-    gifViewer.height = 200;
-    gifViewer.width = 200;
     this.setState({ gifViewer });
   };
 }
