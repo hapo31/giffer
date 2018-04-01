@@ -8,7 +8,8 @@
     "trailing-comma": false,
     "member-access": false,
     "semicolon": false,
-    "object-literal-sort-keys": true
+    "object-literal-sort-keys": false,
+    "no-console": false
     // "strict-null-checks-of-nullable-number": true
   },
   "exclude": ["tslint-rules", "typings"]

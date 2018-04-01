@@ -5,7 +5,7 @@
   "author": "happou31 <happo31@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "webpack --config ./webpack.config.js --watch --devtool source-map --mode development --entry './src' --output dist/app.js --module-bind 'ts=ts-loader' --module-bind 'tsx=ts-loader' --resolve-extensions .ts,.tsx,.js",
+    "start": "webpack --config ./webpack.config.js --watch --devtool source-map --mode development --module-bind 'ts=ts-loader' --module-bind 'tsx=ts-loader' --resolve-extensions .ts,.tsx,.js",
     "server": "ts-node server.ts"
   },
   "dependencies": {

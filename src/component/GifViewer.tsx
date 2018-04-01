@@ -2,6 +2,7 @@ import * as React from "react";
 import { LazyInit } from "../lib/LazyInitDecorator";
 import { LoadImage } from "../lib/LoadImage";
 import GIFEncoder from "../lib/GIFEncoder";
+import encode64 from "../lib/b64";
 
 export type GifViewerProps = {
   srcList: string[];
@@ -43,8 +44,8 @@ export default class GifViewer extends React.Component<
       encoder.start();
       const context = this.canvas!.getContext("2d");
       items.forEach(v => {
-        context!.drawImage(v, 0, 0, maxWidth, height);
-        encoder.addFrame(context!);
+        context!.drawImage(v, 0, 0, v.width, v.height);
+        encoder.addFrame(context!.getImageData(0, 0, v.width, v.height), true);
       });
       encoder.finish();
 
@@ -61,10 +62,9 @@ export default class GifViewer extends React.Component<
 
   public shouldComponentUpdate(next: GifViewerProps) {
     return (
-      next.srcList.length > 0 &&
-      (this.props.delay !== next.delay ||
-        this.props.repeat !== next.repeat ||
-        this.props.srcList.some((v, i) => next.srcList[i] === v))
+      this.props.delay !== next.delay ||
+      this.props.repeat !== next.repeat ||
+      this.props.srcList.some((v, i) => next.srcList[i] === v)
     );
   }
 
@@ -75,6 +75,7 @@ export default class GifViewer extends React.Component<
           ref={e => (this.canvas = e)}
           width={this.state.width}
           height={this.state.height}
+          style={{ visibility: "none" }}
         />
         <img src={this.state.dataUrl} alt="" />
         {this.state.width}x{this.state.height}

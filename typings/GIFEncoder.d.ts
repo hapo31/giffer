@@ -95,7 +95,7 @@ declare class GIFEncoder {
    * @param is_imageData
    * @return
    */
-  addFrame(im: CanvasRenderingContext2D, is_imageData?: any): boolean;
+  addFrame(im: any, is_imageData?: boolean): boolean;
 
   /**
    * @description: Downloads the encoded gif with the given name

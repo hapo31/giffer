@@ -4,19 +4,36 @@ const path = require("path");
 const nodeModulesPath = path.join(__dirname, "node_modules");
 
 module.exports = {
+  entry: {
+    app: path.join(__dirname, "./src/index.tsx")
+  },
+  output: {
+    filename: "[name].js"
+  },
+  optimization: {
+    splitChunks: {
+      name: "vendor",
+      chunks: "initial"
+    }
+  },
   plugins: [
     new webpack.LoaderOptionsPlugin({
       options: {
         loaders: [
           {
-            test: require.resolve("jsgif/b64"),
-            loader: "expose-loader?encode64"
+            test: require.resolve("jsgif/LZWEncoder"),
+            loader: "expose-loader?LZWEncoder"
+          },
+          {
+            test: require.resolve("jsgif/NeuQuant"),
+            loader: "expose-loader?NeuQuant"
           }
         ]
       }
     }),
     new webpack.ProvidePlugin({
-      encode64: "jsgif/b64"
+      LZWEncoder: "jsgif/LZWEncoder",
+      NeuQuant: "jsgif/NeuQuant"
     })
   ]
 };
