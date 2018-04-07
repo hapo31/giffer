@@ -1,4 +1,5 @@
 const webpack = require("webpack");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const path = require("path");
 
 const nodeModulesPath = path.join(__dirname, "node_modules");
@@ -17,23 +18,16 @@ module.exports = {
     }
   },
   plugins: [
-    new webpack.LoaderOptionsPlugin({
-      options: {
-        loaders: [
-          {
-            test: require.resolve("jsgif/LZWEncoder"),
-            loader: "expose-loader?LZWEncoder"
-          },
-          {
-            test: require.resolve("jsgif/NeuQuant"),
-            loader: "expose-loader?NeuQuant"
-          }
-        ]
+    new CopyWebpackPlugin([
+      {
+        from: "./node_modules/jsgif/LZWEncoder.js"
+      },
+      {
+        from: "./node_modules/jsgif/NeuQuant.js"
+      },
+      {
+        from: "./node_modules/jsgif/GIFEncoder.js"
       }
-    }),
-    new webpack.ProvidePlugin({
-      LZWEncoder: "jsgif/LZWEncoder",
-      NeuQuant: "jsgif/NeuQuant"
-    })
+    ])
   ]
 };
