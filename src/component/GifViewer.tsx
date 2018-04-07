@@ -1,7 +1,6 @@
 import * as React from "react";
 import { LazyInit } from "../lib/LazyInitDecorator";
 import { LoadImage } from "../lib/LoadImage";
-import GIFEncoder from "../lib/GIFEncoder";
 import encode64 from "../lib/b64";
 
 export type GifViewerProps = {
@@ -33,19 +32,22 @@ export default class GifViewer extends React.Component<
       this.state.encoder.finish();
     }
     Promise.all(next.srcList.map(v => LoadImage(v))).then(items => {
-      const maxWidth = Math.max(0, ...items.map(v => v.width));
-      const maxIndex = items.findIndex(v => v.width === maxWidth);
-      const height = items[maxIndex] ? items[maxIndex].height : 0;
+      const width = items[0] ? items[0].width : 0;
+      const height = items[0] ? items[0].height : 0;
       const encoder = new GIFEncoder();
-
+      this.canvas!.width = width;
+      this.canvas!.height = height;
+      const context = this.canvas!.getContext("2d");
       encoder.setRepeat(next.repeat);
       encoder.setDelay(next.delay);
-      encoder.setSize(maxWidth, height);
       encoder.start();
-      const context = this.canvas!.getContext("2d");
       items.forEach(v => {
-        context!.drawImage(v, 0, 0, v.width, v.height);
-        encoder.addFrame(context!.getImageData(0, 0, v.width, v.height), true);
+        context!.fillStyle = "rgb(255,255,255)";
+        context!.fillRect(0, 0, width, height);
+        context!.drawImage(v, 0, 0, width, height);
+        encoder.setSize(width, height);
+        const { data } = context!.getImageData(0, 0, width, height);
+        encoder.addFrame(data, true);
       });
       encoder.finish();
 
@@ -54,7 +56,7 @@ export default class GifViewer extends React.Component<
           encoder.stream().getData()
         )}`,
         encoder,
-        width: maxWidth,
+        width,
         height
       });
     });
@@ -72,10 +74,10 @@ export default class GifViewer extends React.Component<
     return (
       <div className="GIFViewer">
         <canvas
-          ref={e => (this.canvas = e)}
+          ref={e => (this.canvas = e!)}
           width={this.state.width}
           height={this.state.height}
-          style={{ visibility: "none" }}
+          style={{ display: "none" }}
         />
         <img src={this.state.dataUrl} alt="" />
         {this.state.width}x{this.state.height}
