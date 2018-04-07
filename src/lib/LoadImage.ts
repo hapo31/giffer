@@ -4,6 +4,9 @@ export function LoadImage(src: string): Promise<HTMLImageElement> {
     img.onload = function() {
       resolve(this as HTMLImageElement);
     };
+    img.onerror = e => {
+      reject(e);
+    };
     img.src = src;
   });
 }

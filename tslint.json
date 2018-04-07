@@ -9,7 +9,8 @@
     "member-access": false,
     "semicolon": false,
     "object-literal-sort-keys": false,
-    "no-console": false
+    "no-console": false,
+    "member-ordering": false
     // "strict-null-checks-of-nullable-number": true
   },
   "exclude": ["tslint-rules", "typings"]

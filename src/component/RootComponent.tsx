@@ -17,11 +17,11 @@ export class RootComponent extends React.Component<{}, RootState> {
   render() {
     return (
       <>
-        <div className="giffer">
-          <GifViewer {...this.state.gifViewer} />
-        </div>
         <div>
           ファイル：<input type="file" onChange={this.onChangeFile} />
+        </div>
+        <div className="giffer">
+          <GifViewer {...this.state.gifViewer} />
         </div>
       </>
     );
@@ -36,7 +36,7 @@ export class RootComponent extends React.Component<{}, RootState> {
     }
     const gifViewer = Object.assign({}, this.state.gifViewer);
     gifViewer.srcList.push(URL.createObjectURL(ev.target.files!.item(0)));
-    gifViewer.delay = 10;
+    gifViewer.delay = 100;
     gifViewer.repeat = 0;
     this.setState({ gifViewer });
   };
