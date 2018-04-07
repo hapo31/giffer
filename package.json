@@ -5,7 +5,7 @@
   "author": "happou31 <happo31@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "webpack --config ./webpack.config.js --watch --devtool source-map --mode development --module-bind 'ts=ts-loader' --module-bind 'tsx=ts-loader' --resolve-extensions .ts,.tsx,.js",
+    "start": "webpack --config ./webpack.config.js --watch --devtool source-map --mode development --module-bind='svg=react-svg-loader' --module-bind 'ts=ts-loader' --module-bind 'tsx=ts-loader' --resolve-extensions .ts,.tsx,.js,.svg",
     "server": "ts-node server.ts"
   },
   "dependencies": {
@@ -20,6 +20,7 @@
     "copy-webpack-plugin": "^4.5.1",
     "expose-loader": "^0.7.5",
     "prettier": "^1.11.1",
+    "react-svg-loader": "^2.1.0",
     "tern": "^0.21.0",
     "ts-loader": "^4.1.0",
     "ts-node": "^5.0.1",
