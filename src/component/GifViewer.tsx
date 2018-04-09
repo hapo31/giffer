@@ -3,6 +3,7 @@ import { LazyInit } from "../lib/LazyInitDecorator";
 import { LoadImage } from "../lib/LoadImage";
 import encode64 from "../lib/b64";
 import { Spinner } from "../Icon/Spinner/Spinner";
+import Gif2Base64 from "../lib/Gif2Base64";
 
 export type GifViewerProps = {
   srcList: string[];
@@ -13,7 +14,6 @@ export type GifViewerProps = {
 };
 
 export type GifViewerState = {
-  encoder?: GIFEncoder;
   dataUrl: string;
   working: boolean;
 };
@@ -30,37 +30,16 @@ export default class GifViewer extends React.Component<
   }
 
   public componentWillReceiveProps(next: GifViewerProps) {
-    if (this.state.encoder) {
-      this.state.encoder.finish();
-    }
-
     this.setState({ working: true });
-
     Promise.all(next.srcList.map(v => LoadImage(v)))
       .then(items => {
         const { height, width, repeat, delay } = next;
-        const encoder = new GIFEncoder();
-        this.canvas!.width = width;
-        this.canvas!.height = height;
-        const context = this.canvas!.getContext("2d");
-        encoder.setRepeat(repeat);
-        encoder.setDelay(delay);
-        encoder.start();
-        items.forEach(v => {
-          context!.fillStyle = "rgb(255,255,255)";
-          context!.fillRect(0, 0, width, height);
-          context!.drawImage(v, 0, 0, width, height);
-          encoder.setSize(width, height);
-          const { data } = context!.getImageData(0, 0, width, height);
-          encoder.addFrame(data, true);
-        });
-        encoder.finish();
-
+        const encoder = new Gif2Base64(items, this.canvas!);
+        return encoder.encode(width, height, repeat, delay);
+      })
+      .then(base64 => {
         this.setState({
-          dataUrl: `data:image/gif;base64,${encode64(
-            encoder.stream().getData()
-          )}`,
-          encoder
+          dataUrl: `data:image/gif;base64,${base64}`
         });
       })
       .then(() => {

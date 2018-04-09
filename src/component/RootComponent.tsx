@@ -28,6 +28,11 @@ export class RootComponent extends React.Component<{}, RootState> {
   render() {
     return (
       <>
+        <div className="imageList">
+          {this.state.gifViewer.srcList.map((v, i) => (
+            <img src={v} key={`img${i}`} width={100} height={100} alt="" />
+          ))}
+        </div>
         <div>
           ファイル：<input type="file" onChange={this.onChangeFile} />
         </div>
