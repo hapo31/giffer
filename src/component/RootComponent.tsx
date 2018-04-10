@@ -2,6 +2,7 @@ import * as React from "react";
 import GifViewer from "./GifViewer";
 import { GifViewerState } from "../State/GifViewer";
 import { PassExtensions } from "../constants/AllowExtensions";
+import Draggable from "../atom/Draggable/Draggable";
 
 export type RootState = {
   gifViewer: GifViewerState;
@@ -30,7 +31,9 @@ export class RootComponent extends React.Component<{}, RootState> {
       <>
         <div className="imageList">
           {this.state.gifViewer.srcList.map((v, i) => (
-            <img src={v} key={`img${i}`} width={100} height={100} alt="" />
+            <Draggable>
+              <img src={v} key={`img${i}`} width={100} height={100} alt="" />
+            </Draggable>
           ))}
         </div>
         <div>
