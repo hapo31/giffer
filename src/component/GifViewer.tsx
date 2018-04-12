@@ -29,22 +29,16 @@ export default class GifViewer extends React.Component<
     this.state = { dataUrl: "", working: false };
   }
 
-  public componentWillReceiveProps(next: GifViewerProps) {
+  public async componentWillReceiveProps(next: GifViewerProps) {
     this.setState({ working: true });
-    Promise.all(next.srcList.map(v => LoadImage(v)))
-      .then(items => {
-        const { height, width, repeat, delay } = next;
-        const encoder = new Gif2Base64(items, this.canvas!);
-        return encoder.encode(width, height, repeat, delay);
-      })
-      .then(base64 => {
-        this.setState({
-          dataUrl: `data:image/gif;base64,${base64}`
-        });
-      })
-      .then(() => {
-        this.setState({ working: false });
-      });
+    const items = await Promise.all( next.srcList.map(v => LoadImage(v)));
+    const { height, width, repeat, delay } = next;
+    const encoder = new Gif2Base64(items, this.canvas!);
+    const base64 = await encoder.encode(width, height, repeat, delay);
+    this.setState({
+      dataUrl: `data:image/gif;base64,${base64}`,
+      working: false
+    });
   }
 
   public shouldComponentUpdate(next: GifViewerProps) {
