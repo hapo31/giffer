@@ -1,6 +1,6 @@
 import * as React from "react";
 import GifViewer from "./GifViewer";
-import { GifViewerState } from "../State/GifViewer";
+import { GifViewerState } from "../state/GifViewer";
 import { PassExtensions } from "../constants/AllowExtensions";
 import Draggable from "../atom/Draggable/Draggable";
 

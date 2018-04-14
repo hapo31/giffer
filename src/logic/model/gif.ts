@@ -1,7 +1,6 @@
-import { LoadImage } from "../logic/lib/LoadImage";
-import Gif2Base64 from "../logic/lib/Gif2Base64";
+import IModel from "./IModel";
 
-export class GifViewerState {
+export default class Gif implements IModel {
   public srcList: string[] = [];
   public delay: number = 0;
   public repeat: number = 0;
@@ -33,4 +32,6 @@ export class GifViewerState {
         return (this.gifDataBase64 = base64);
       });
   }
+
+  createState() {}
 }
