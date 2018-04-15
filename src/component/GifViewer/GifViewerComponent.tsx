@@ -44,7 +44,7 @@ export default class GifViewerComponent extends React.Component<
           Delay:
           <input
             type="number"
-            onChange={this.onChangeInputBinder(
+            onChange={this.onChangeInputBind(
               this.props.gifViewer.onChangeDelay
             )}
             ref={e => (this.delayElement = e!)}
@@ -53,14 +53,14 @@ export default class GifViewerComponent extends React.Component<
         <div>
           Size: width<input
             type="number"
-            onChange={this.onChangeInputBinder(
+            onChange={this.onChangeInputBind(
               this.props.gifViewer.onChangeWidth
             )}
             ref={e => (this.widthElement = e!)}
           />
           height<input
             type="number"
-            onChange={this.onChangeInputBinder(
+            onChange={this.onChangeInputBind(
               this.props.gifViewer.onChangeHeight
             )}
             ref={e => (this.heightElement = e!)}
@@ -82,10 +82,11 @@ export default class GifViewerComponent extends React.Component<
   }
 
   /**
-   * ハンドラを受け取ってUIEventに対するイベントハンドラを返す高階関数
+   * ハンドラを受け取ってChangeEventに対するイベントハンドラを返す高階関数
    */
-  private onChangeInputBinder = (handler: (value: number) => void) => {
+  private onChangeInputBind = (handler: (value: number) => void) => {
     return (ev: React.ChangeEvent<HTMLInputElement>) => {
+      // Formの入力値をparseIntしてハンドラに渡す
       const n = parseInt(ev.currentTarget.value, 10);
       if (!isNaN(n)) {
         handler(n);
