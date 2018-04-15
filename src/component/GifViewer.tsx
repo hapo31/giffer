@@ -9,13 +9,6 @@ import PassExtensions from "../constant/AllowExtensions";
 import GifViewerStore from "../store/GifViewerStore";
 import { inject, observer } from "mobx-react";
 
-const INIT_PARAM = {
-  delay: 100,
-  repeat: 0,
-  width: 100,
-  height: 100
-};
-
 export type GifViewerProps = {
   gifViewer?: GifViewerStore;
 };
@@ -91,7 +84,10 @@ export default class GifViewer extends React.Component<GifViewerProps> {
    */
   private onChangeInputBinder = (handler: (value: number) => void) => {
     return (ev: React.ChangeEvent<HTMLInputElement>) => {
-      handler(parseInt(ev.currentTarget.value, 10));
+      const n = parseInt(ev.currentTarget.value, 10);
+      if (!isNaN(n)) {
+        handler(n);
+      }
     };
   };
 
@@ -108,9 +104,13 @@ export default class GifViewer extends React.Component<GifViewerProps> {
       return;
     }
     const { srcList, delay, width, height } = this.props.gifViewer;
-    if (srcList.length === 0) {
+    if (this.delayElement!.value == null) {
       this.delayElement!.value = `${delay}`;
+    }
+    if (this.widthElement!.value == null) {
       this.widthElement!.value = `${width}`;
+    }
+    if (this.heightElement!.value == null) {
       this.heightElement!.value = `${height}`;
     }
     this.props.gifViewer.addSrc(URL.createObjectURL(ev.target.files!.item(0)));
