@@ -1,7 +1,7 @@
 import * as React from "react";
 import LoadImage from "../../logic/lib/LoadImage";
 import encode64 from "../../logic/lib/b64";
-import Spinner from "../../Icon/Spinner/Spinner";
+import Spinner from "../../atom/Spinner/Spinner";
 import Gif2Base64 from "../../logic/lib/Gif2Base64";
 import GifFoundation from "../../atom/GifFoundation/GifFoundation";
 import Draggable from "../../atom/Draggable/Draggable";
