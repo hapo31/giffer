@@ -1,51 +1,123 @@
 import * as React from "react";
-import { LazyInit } from "../logic/lib/LazyInitDecorator";
-import { LoadImage } from "../logic/lib/LoadImage";
+import LoadImage from "../logic/lib/LoadImage";
 import encode64 from "../logic/lib/b64";
-import { Spinner } from "../Icon/Spinner/Spinner";
+import Spinner from "../Icon/Spinner/Spinner";
 import Gif2Base64 from "../logic/lib/Gif2Base64";
+import GifFoundation from "../atom/GifFoundation/GifFoundation";
+import Draggable from "../atom/Draggable/Draggable";
+import PassExtensions from "../constant/AllowExtensions";
+import GifViewerStore from "../store/GifViewerStore";
+import { inject, observer } from "mobx-react";
 
-export type GifViewerProps = {
-  onMounted: (canvas: HTMLCanvasElement) => void;
-  srcList: string[];
-  delay: number;
-  height: number;
-  width: number;
-  repeat: number;
+const INIT_PARAM = {
+  delay: 100,
+  repeat: 0,
+  width: 100,
+  height: 100
 };
 
+export type GifViewerProps = {
+  gifViewer?: GifViewerStore;
+};
+
+@inject("gifViewer")
+@observer
 export default class GifViewer extends React.Component<GifViewerProps> {
   private canvas: HTMLCanvasElement | null = null;
-
-  constructor(props: GifViewerProps) {
-    super(props);
-    this.state = { dataUrl: "", working: false };
-  }
-
-  public shouldComponentUpdate(next: GifViewerProps) {
-    return (
-      this.props.delay !== next.delay ||
-      this.props.repeat !== next.repeat ||
-      this.props.srcList.some((v, i) => next.srcList[i] === v)
-    );
-  }
-
-  public componentDidMount() {
-    this.props.onMounted(this.canvas!);
-  }
+  private delayElement?: HTMLInputElement;
+  private widthElement?: HTMLInputElement;
+  private heightElement?: HTMLInputElement;
 
   render() {
+    if (!this.props.gifViewer) {
+      return null;
+    }
+    const { srcList, width, height, dataUrl } = this.props.gifViewer;
     return (
-      <div className="GIFViewer">
-        <canvas
-          ref={e => (this.canvas = e!)}
-          width={this.props.width}
-          height={this.props.height}
-          style={{ display: "none" }}
-        />
-        <img src={this.props.dataUrl} alt="" />
-        {this.props.width}x{this.props.height}
-      </div>
+      <>
+        <div className="imageList">
+          {srcList.map((v, i) => (
+            <Draggable>
+              <img src={v} key={`img${i}`} width={100} height={100} alt="" />
+            </Draggable>
+          ))}
+        </div>
+        <div>
+          ファイル：<input type="file" onChange={this.onChangeFile} />
+        </div>
+        <div>
+          Delay:
+          <input
+            type="number"
+            onChange={this.onChangeInputBinder(
+              this.props.gifViewer.onChangeDelay
+            )}
+            ref={e => (this.delayElement = e!)}
+          />ms
+        </div>
+        <div>
+          Size: width<input
+            type="number"
+            onChange={this.onChangeInputBinder(
+              this.props.gifViewer.onChangeWidth
+            )}
+            ref={e => (this.widthElement = e!)}
+          />
+          height<input
+            type="number"
+            onChange={this.onChangeInputBinder(
+              this.props.gifViewer.onChangeHeight
+            )}
+            ref={e => (this.heightElement = e!)}
+          />
+        </div>
+        <div>
+          <button onClick={this.onClickUpdate}>Update</button>
+        </div>
+        <div className="GifFoundation">
+          <GifFoundation
+            onMounted={this.onMountedGif}
+            dataUrl={dataUrl}
+            width={width}
+            height={height}
+          />
+        </div>
+      </>
     );
   }
+
+  /**
+   * ハンドラを受け取ってUIEventに対するイベントハンドラを返す高階関数
+   */
+  private onChangeInputBinder = (handler: (value: number) => void) => {
+    return (ev: React.ChangeEvent<HTMLInputElement>) => {
+      handler(parseInt(ev.currentTarget.value, 10));
+    };
+  };
+
+  private onMountedGif = (canvas: HTMLCanvasElement) => {
+    this.canvas = canvas;
+  };
+
+  private onChangeFile = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    if (
+      !this.props.gifViewer ||
+      !ev.target.files ||
+      !PassExtensions(ev.target.value.toLocaleLowerCase())
+    ) {
+      return;
+    }
+    const { srcList, delay, width, height } = this.props.gifViewer;
+    if (srcList.length === 0) {
+      this.delayElement!.value = `${delay}`;
+      this.widthElement!.value = `${width}`;
+      this.heightElement!.value = `${height}`;
+    }
+    this.props.gifViewer.addSrc(URL.createObjectURL(ev.target.files!.item(0)));
+    this.props.gifViewer!.updateImage(this.canvas!);
+  };
+
+  private onClickUpdate = (ev: React.MouseEvent<HTMLButtonElement>) => {
+    this.props.gifViewer!.updateImage(this.canvas!);
+  };
 }
