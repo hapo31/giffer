@@ -1,12 +1,12 @@
 import * as React from "react";
-import LoadImage from "../logic/lib/LoadImage";
-import encode64 from "../logic/lib/b64";
-import Spinner from "../Icon/Spinner/Spinner";
-import Gif2Base64 from "../logic/lib/Gif2Base64";
-import GifFoundation from "../atom/GifFoundation/GifFoundation";
-import Draggable from "../atom/Draggable/Draggable";
-import PassExtensions from "../constant/AllowExtensions";
-import GifViewerStore from "../store/GifViewerStore";
+import LoadImage from "../../logic/lib/LoadImage";
+import encode64 from "../../logic/lib/b64";
+import Spinner from "../../Icon/Spinner/Spinner";
+import Gif2Base64 from "../../logic/lib/Gif2Base64";
+import GifFoundation from "../../atom/GifFoundation/GifFoundation";
+import Draggable from "../../atom/Draggable/Draggable";
+import PassExtensions from "../../constant/AllowExtensions";
+import GifViewerStore from "../../store/GifViewerStore";
 import { inject, observer } from "mobx-react";
 
 export type GifViewerProps = {
@@ -15,7 +15,9 @@ export type GifViewerProps = {
 
 @inject("gifViewer")
 @observer
-export default class GifViewer extends React.Component<GifViewerProps> {
+export default class GifViewerComponent extends React.Component<
+  GifViewerProps
+> {
   private canvas: HTMLCanvasElement | null = null;
   private delayElement?: HTMLInputElement;
   private widthElement?: HTMLInputElement;
@@ -104,13 +106,13 @@ export default class GifViewer extends React.Component<GifViewerProps> {
       return;
     }
     const { srcList, delay, width, height } = this.props.gifViewer;
-    if (this.delayElement!.value == null) {
+    if (this.delayElement!.value.length === 0) {
       this.delayElement!.value = `${delay}`;
     }
-    if (this.widthElement!.value == null) {
+    if (this.widthElement!.value.length === 0) {
       this.widthElement!.value = `${width}`;
     }
-    if (this.heightElement!.value == null) {
+    if (this.heightElement!.value.length === 0) {
       this.heightElement!.value = `${height}`;
     }
     this.props.gifViewer.addSrc(URL.createObjectURL(ev.target.files!.item(0)));
