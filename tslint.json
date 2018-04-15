@@ -10,7 +10,9 @@
     "semicolon": false,
     "object-literal-sort-keys": false,
     "no-console": false,
-    "member-ordering": false
+    "member-ordering": false,
+    "interface-name": false,
+    "no-namespace": false
     // "strict-null-checks-of-nullable-number": true
   },
   "exclude": ["tslint-rules", "typings"]
