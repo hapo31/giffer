@@ -8,9 +8,11 @@ import Draggable from "../../atom/Draggable/Draggable";
 import PassExtensions from "../../constant/AllowExtensions";
 import GifViewerStore from "../../store/GifViewerStore";
 import { inject, observer } from "mobx-react";
+import createDataUrl from "../../logic/lib/createDataUrl";
 
 export type GifViewerProps = {
   gifViewer?: GifViewerStore;
+  onChanged: (store: GifViewerStore) => void;
 };
 
 @inject("gifViewer")
@@ -22,6 +24,14 @@ export default class GifViewerComponent extends React.Component<
   private delayElement?: HTMLInputElement;
   private widthElement?: HTMLInputElement;
   private heightElement?: HTMLInputElement;
+
+  componentDidMount() {
+    if (!this.props.gifViewer || this.props.gifViewer.srcList.length === 0) {
+      return;
+    }
+    this.setValueToElement(this.props.gifViewer);
+    this.props.gifViewer.updateImage(this.canvas!);
+  }
 
   render() {
     if (!this.props.gifViewer) {
@@ -81,6 +91,19 @@ export default class GifViewerComponent extends React.Component<
     );
   }
 
+  private setValueToElement(gifViewer: GifViewerStore) {
+    const { delay, width, height } = gifViewer;
+    if (this.delayElement!.value.length === 0) {
+      this.delayElement!.value = `${delay}`;
+    }
+    if (this.widthElement!.value.length === 0) {
+      this.widthElement!.value = `${width}`;
+    }
+    if (this.heightElement!.value.length === 0) {
+      this.heightElement!.value = `${height}`;
+    }
+  }
+
   /**
    * ハンドラを受け取ってChangeEventに対するイベントハンドラを返す高階関数
    */
@@ -98,35 +121,28 @@ export default class GifViewerComponent extends React.Component<
     this.canvas = canvas;
   };
 
-  private onChangeFile = (ev: React.ChangeEvent<HTMLInputElement>) => {
+  private onChangeFile = async (ev: React.ChangeEvent<HTMLInputElement>) => {
     if (
-      !this.props.gifViewer ||
-      !ev.target.files ||
+      this.props.gifViewer == null ||
+      ev.target == null ||
+      ev.target.files == null ||
       !PassExtensions(ev.target.value.toLocaleLowerCase())
     ) {
       return;
     }
-    const { srcList, delay, width, height } = this.props.gifViewer;
-    if (this.delayElement!.value.length === 0) {
-      this.delayElement!.value = `${delay}`;
-    }
-    if (this.widthElement!.value.length === 0) {
-      this.widthElement!.value = `${width}`;
-    }
-    if (this.heightElement!.value.length === 0) {
-      this.heightElement!.value = `${height}`;
-    }
+    ev.persist();
 
     for (let i = 0; i < ev.target.files.length; ++i) {
-      this.props.gifViewer.addSrc(
-        URL.createObjectURL(ev.target.files!.item(i))
-      );
+      const base64 = await createDataUrl(ev.target.files.item(i)!);
+      this.props.gifViewer.addSrc(base64);
     }
-
-    this.props.gifViewer!.updateImage(this.canvas!);
+    this.setValueToElement(this.props.gifViewer);
+    this.props.gifViewer.updateImage(this.canvas!);
+    this.props.onChanged(this.props.gifViewer);
   };
 
   private onClickUpdate = (ev: React.MouseEvent<HTMLButtonElement>) => {
     this.props.gifViewer!.updateImage(this.canvas!);
+    this.props.onChanged(this.props.gifViewer!);
   };
 }

@@ -1,6 +1,7 @@
 import { observable, action, computed } from "mobx";
 
 import GifFactory from "../logic/model/GifFactory";
+import Serializable from "./BaseStore";
 
 export type GifViewerStoreType = {
   width: number;
@@ -11,13 +12,20 @@ export type GifViewerStoreType = {
   srcList: string[];
 };
 
-export default class GifViewerStore {
+export default class GifViewerStore
+  implements Serializable<GifViewerStoreType> {
   @observable public width: number = 100;
   @observable public height: number = 100;
   @observable public repeat: number = 0;
   @observable public delay: number = 100;
   @observable public srcList: string[] = [];
-  @observable private base64: string = "";
+  @observable public base64: string = "";
+
+  constructor(prop?: GifViewerStoreType) {
+    if (prop) {
+      Object.assign(this, prop);
+    }
+  }
 
   @computed
   public get dataUrl() {
@@ -64,5 +72,16 @@ export default class GifViewerStore {
       this.delay,
       this.repeat
     );
+  }
+
+  public serialize(): GifViewerStoreType {
+    return {
+      width: this.width,
+      height: this.height,
+      srcList: this.srcList,
+      delay: this.delay,
+      repeat: this.repeat,
+      base64: this.base64
+    };
   }
 }
