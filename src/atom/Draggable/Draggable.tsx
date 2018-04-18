@@ -39,7 +39,7 @@ export default class Draggable extends React.Component<DraggableProps, State> {
         ref={c => (this.span = c!)}
         onMouseDown={this.onMouseDown}
         onMouseMove={this.onMouseMove}
-        onMouseUp={this.onMouseUp}
+        onMouseLeave={this.onMouseLeave}
         className={this.props.className}
         style={this.style}
       >
@@ -48,7 +48,7 @@ export default class Draggable extends React.Component<DraggableProps, State> {
     );
   }
 
-  private get style(): React.CSSProperties | undefined {
+  private get style(): React.CSSProperties {
     return this.state.dragging
       ? {
           position: "fixed",
@@ -94,7 +94,10 @@ export default class Draggable extends React.Component<DraggableProps, State> {
     ev.preventDefault();
   };
 
-  private onMouseUp: React.MouseEventHandler<HTMLElement> = ev => {
+  private onMouseLeave: React.MouseEventHandler<HTMLElement> = ev => {
+    if (!this.state.dragging) {
+      return;
+    }
     ev.preventDefault();
     console.log("onMouseUp");
     this.setState({
