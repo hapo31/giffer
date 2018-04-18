@@ -38,7 +38,7 @@ export default class GifViewerComponent extends React.Component<
           ))}
         </div>
         <div>
-          ファイル：<input type="file" onChange={this.onChangeFile} />
+          ファイル：<input type="file" multiple onChange={this.onChangeFile} />
         </div>
         <div>
           Delay:
@@ -116,7 +116,13 @@ export default class GifViewerComponent extends React.Component<
     if (this.heightElement!.value.length === 0) {
       this.heightElement!.value = `${height}`;
     }
-    this.props.gifViewer.addSrc(URL.createObjectURL(ev.target.files!.item(0)));
+
+    for (let i = 0; i < ev.target.files.length; ++i) {
+      this.props.gifViewer.addSrc(
+        URL.createObjectURL(ev.target.files!.item(i))
+      );
+    }
+
     this.props.gifViewer!.updateImage(this.canvas!);
   };
 
