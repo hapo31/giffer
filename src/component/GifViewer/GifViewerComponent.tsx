@@ -21,15 +21,11 @@ export default class GifViewerComponent extends React.Component<
   GifViewerProps
 > {
   private canvas: HTMLCanvasElement | null = null;
-  private delayElement?: HTMLInputElement;
-  private widthElement?: HTMLInputElement;
-  private heightElement?: HTMLInputElement;
 
   componentDidMount() {
     if (!this.props.gifViewer || this.props.gifViewer.srcList.length === 0) {
       return;
     }
-    this.setValueToElement(this.props.gifViewer);
     this.props.gifViewer.updateImage(this.canvas!);
   }
 
@@ -54,26 +50,26 @@ export default class GifViewerComponent extends React.Component<
           Delay:
           <input
             type="number"
+            value={this.props.gifViewer.delay}
             onChange={this.onChangeInputBind(
               this.props.gifViewer.onChangeDelay
             )}
-            ref={e => (this.delayElement = e!)}
           />ms
         </div>
         <div>
           Size: width<input
             type="number"
+            value={this.props.gifViewer.width}
             onChange={this.onChangeInputBind(
               this.props.gifViewer.onChangeWidth
             )}
-            ref={e => (this.widthElement = e!)}
           />
           height<input
             type="number"
+            value={this.props.gifViewer.height}
             onChange={this.onChangeInputBind(
               this.props.gifViewer.onChangeHeight
             )}
-            ref={e => (this.heightElement = e!)}
           />
         </div>
         <div>
@@ -89,19 +85,6 @@ export default class GifViewerComponent extends React.Component<
         </div>
       </>
     );
-  }
-
-  private setValueToElement(gifViewer: GifViewerStore) {
-    const { delay, width, height } = gifViewer;
-    if (this.delayElement!.value.length === 0) {
-      this.delayElement!.value = `${delay}`;
-    }
-    if (this.widthElement!.value.length === 0) {
-      this.widthElement!.value = `${width}`;
-    }
-    if (this.heightElement!.value.length === 0) {
-      this.heightElement!.value = `${height}`;
-    }
   }
 
   /**
@@ -136,7 +119,6 @@ export default class GifViewerComponent extends React.Component<
       const base64 = await createDataUrl(ev.target.files.item(i)!);
       this.props.gifViewer.addSrc(base64);
     }
-    this.setValueToElement(this.props.gifViewer);
     this.props.gifViewer.updateImage(this.canvas!);
     this.props.onChanged(this.props.gifViewer);
   };
