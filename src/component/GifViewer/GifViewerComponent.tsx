@@ -9,6 +9,12 @@ import PassExtensions from "../../constant/AllowExtensions";
 import GifViewerStore from "../../store/GifViewerStore";
 import { inject, observer } from "mobx-react";
 import createDataUrl from "../../logic/lib/createDataUrl";
+import {
+  ReactElementType,
+  isReactElement
+} from "../../logic/helpler/TypeHelper";
+
+const IMAGE_PREVIEW_SIZE = 100;
 
 export type GifViewerProps = {
   gifViewer?: GifViewerStore;
@@ -38,8 +44,13 @@ export default class GifViewerComponent extends React.Component<
       <>
         <div className="imageList">
           {srcList.map((v, i) => (
-            <Draggable>
-              <img src={v} key={`img${i}`} width={100} height={100} alt="" />
+            <Draggable key={`imageList-${i}`} onDragging={this.onDragging(i)}>
+              <img
+                src={v}
+                width={IMAGE_PREVIEW_SIZE}
+                height={IMAGE_PREVIEW_SIZE}
+                alt=""
+              />
             </Draggable>
           ))}
         </div>
@@ -88,7 +99,46 @@ export default class GifViewerComponent extends React.Component<
   }
 
   /**
+   * 要素をドラッグ中、条件を満たすと横の要素と位置を入れ替える
+   * @private
+   * @memberof GifViewerComponent
+   */
+  private onDragging = (index: number) => {
+    return (target: React.MouseEvent<HTMLImageElement>) => {
+      if (!this.props.gifViewer) {
+        return false;
+      }
+      const { srcList } = this.props.gifViewer;
+
+      // 右要素との入れ替え
+      if (
+        srcList.length - 1 !== index &&
+        target.pageX > (index + 1) * IMAGE_PREVIEW_SIZE
+      ) {
+        const t = srcList[index];
+        srcList[index] = srcList[index + 1];
+        srcList[index + 1] = t;
+        this.props.gifViewer.setSrc(srcList);
+        return false;
+      }
+
+      // 左要素との入れ替え
+      if (index > 0 && target.pageX < index * IMAGE_PREVIEW_SIZE) {
+        const t = srcList[index];
+        srcList[index] = srcList[index - 1];
+        srcList[index - 1] = t;
+        this.props.gifViewer.setSrc(srcList);
+        return false;
+      }
+
+      return true;
+    };
+  };
+
+  /**
    * ハンドラを受け取ってChangeEventに対するイベントハンドラを返す高階関数
+   * @private
+   * @memberof GifViewerComponent
    */
   private onChangeInputBind = (handler: (value: number) => void) => {
     return (ev: React.ChangeEvent<HTMLInputElement>) => {

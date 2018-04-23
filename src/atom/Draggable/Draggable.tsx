@@ -1,73 +1,103 @@
 import * as React from "react";
+import {
+  isReactElement,
+  ReactElementType
+} from "../../logic/helpler/TypeHelper";
 
 export type DraggableProps = {
   anchorPoint?: { x: number; y: number };
   onDrag?: React.MouseEventHandler<HTMLElement>;
-  onDragging?: React.MouseEventHandler<HTMLElement>;
+  onDragging?: (ev: React.MouseEvent<any>) => boolean;
   onDrop?: React.MouseEventHandler<HTMLElement>;
   className?: string;
 };
 
 type State = {
   dragging: boolean;
+  width: number;
+  height: number;
   x: number;
   y: number;
 };
 
 export default class Draggable extends React.Component<DraggableProps, State> {
-  private span?: HTMLElement;
+  private div?: HTMLElement;
 
   componentWillMount() {
     this.setState({
       dragging: false,
+      width: 0,
+      height: 0,
       x: 0,
       y: 0
     });
   }
 
-  shouldComponentUpdate(prevProps: DraggableProps, prevState: State) {
-    return (
-      this.state.dragging !== prevState.dragging ||
-      this.state.x !== prevState.x ||
-      this.state.y !== prevState.y
-    );
+  componentDidMount() {
+    if (isReactElement(this.props.children)) {
+      this.setState({
+        width: this.props.children.props.width || 0,
+        height: this.props.children.props.height || 0
+      });
+    }
   }
+
+  // childrenが変わったことを検知する方法が分かるまで一旦コメントアウト
+  // shouldComponentUpdate(prevProps: DraggableProps, prevState: State) {
+  //   return (
+  //     this.state.height !== prevState.height ||
+  //     this.state.width !== prevState.width ||
+  //     this.state.dragging !== prevState.dragging ||
+  //     this.state.x !== prevState.x ||
+  //     this.state.y !== prevState.y
+  //   );
+  // }
 
   render() {
     return (
-      <span
-        ref={c => (this.span = c!)}
-        onMouseDown={this.onMouseDown}
-        onMouseMove={this.onMouseMove}
-        onMouseLeave={this.onMouseLeave}
-        className={this.props.className}
-        style={this.style}
-      >
-        {this.props.children}
-      </span>
+      <>
+        {this.createSkelton(this.state.width, this.state.height)}
+        <div
+          ref={c => (this.div = c!)}
+          onMouseDown={this.onMouseDown}
+          onMouseMove={this.onMouseMove}
+          onMouseUp={this.onMouseUp}
+          onMouseLeave={this.onMouseUp}
+          className={this.props.className}
+          style={this.style}
+        >
+          {this.props.children}
+        </div>
+      </>
     );
   }
 
   private get style(): React.CSSProperties {
-    return this.state.dragging
-      ? {
-          position: "fixed",
-          top:
-            this.state.y +
-            (this.span ? this.span.clientHeight / 2 - this.span.offsetTop : 0) +
-            (this.props.anchorPoint ? this.props.anchorPoint.y : 0),
-          left:
-            this.state.x +
-            (this.span ? this.span.clientWidth / 2 - this.span.offsetLeft : 0) +
-            (this.props.anchorPoint ? this.props.anchorPoint.x : 0)
-        }
-      : {
-          position: "inherit"
-        };
+    return {
+      width: `${this.state.width}px`,
+      height: `${this.state.height}px`,
+      display: "inline-block",
+      ...(this.state.dragging
+        ? {
+            position: "fixed",
+            top: `${this.state.y - this.div!.clientHeight / 2}px`,
+            left: `${this.state.x - this.div!.clientWidth / 2}px`
+          }
+        : {
+            position: "inherit"
+          })
+    };
+  }
+
+  private createSkelton(width: number, height: number) {
+    if (this.state.dragging) {
+      return <div style={{ width, height, display: "inline-block" }} />;
+    } else {
+      return null;
+    }
   }
 
   private onMouseDown: React.MouseEventHandler<HTMLElement> = ev => {
-    console.log("onMouseDown");
     ev.preventDefault();
     this.setState({
       x: ev.pageX,
@@ -83,23 +113,27 @@ export default class Draggable extends React.Component<DraggableProps, State> {
     if (!this.state.dragging) {
       return;
     }
-    console.log("onMouseMove");
     this.setState({
-      x: ev.pageX - this.state.x,
-      y: ev.pageY - this.state.y
+      x: ev.pageX,
+      y: ev.pageY
     });
     if (this.props.onDragging != null) {
-      this.props.onDragging(ev);
+      if (!this.props.onDragging(ev)) {
+        this.setState({
+          x: 0,
+          y: 0,
+          dragging: false
+        });
+      }
     }
     ev.preventDefault();
   };
 
-  private onMouseLeave: React.MouseEventHandler<HTMLElement> = ev => {
+  private onMouseUp: React.MouseEventHandler<HTMLElement> = ev => {
     if (!this.state.dragging) {
       return;
     }
     ev.preventDefault();
-    console.log("onMouseUp");
     this.setState({
       x: 0,
       y: 0,
