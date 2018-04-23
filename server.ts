@@ -12,7 +12,7 @@ http
     }
     const path = url.parse(req.url);
     if (path.path == null || path.path === "/") {
-      fs.readFile("index.html", (err, file) => {
+      fs.readFile("index.html", (_, file) => {
         res.end(file);
       });
     } else {

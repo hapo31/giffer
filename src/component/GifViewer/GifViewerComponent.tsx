@@ -1,18 +1,10 @@
 import * as React from "react";
-import LoadImage from "../../logic/lib/LoadImage";
-import encode64 from "../../logic/lib/b64";
-import Spinner from "../../atom/Spinner/Spinner";
-import Gif2Base64 from "../../logic/lib/Gif2Base64";
 import GifFoundation from "../../atom/GifFoundation/GifFoundation";
 import Draggable from "../../atom/Draggable/Draggable";
 import PassExtensions from "../../constant/AllowExtensions";
 import GifViewerStore from "../../store/GifViewerStore";
 import { inject, observer } from "mobx-react";
 import createDataUrl from "../../logic/lib/createDataUrl";
-import {
-  ReactElementType,
-  isReactElement
-} from "../../logic/helpler/TypeHelper";
 
 const IMAGE_PREVIEW_SIZE = 100;
 
@@ -173,7 +165,7 @@ export default class GifViewerComponent extends React.Component<
     this.props.onChanged(this.props.gifViewer);
   };
 
-  private onClickUpdate = (ev: React.MouseEvent<HTMLButtonElement>) => {
+  private onClickUpdate = () => {
     this.props.gifViewer!.updateImage(this.canvas!);
     this.props.onChanged(this.props.gifViewer!);
   };

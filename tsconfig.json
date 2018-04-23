@@ -5,6 +5,8 @@
     "lib": ["dom", "es2016"],
     "jsx": "react",
     "strict": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
     "noEmitHelpers": true,
     "importHelpers": true,
     "experimentalDecorators": true

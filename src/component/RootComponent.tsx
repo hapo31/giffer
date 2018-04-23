@@ -2,7 +2,6 @@ import * as React from "react";
 import { Provider } from "mobx-react";
 
 import GifViewer from "./GifViewer/GifViewerComponent";
-import Draggable from "../atom/Draggable/Draggable";
 import GifViewerStore from "../store/GifViewerStore";
 import storeManager from "../logic/model/StoreManager";
 

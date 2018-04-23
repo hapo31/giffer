@@ -1,8 +1,5 @@
 import * as React from "react";
-import {
-  isReactElement,
-  ReactElementType
-} from "../../logic/helpler/TypeHelper";
+import { isReactElement } from "../../logic/helpler/TypeHelper";
 
 export type DraggableProps = {
   anchorPoint?: { x: number; y: number };
