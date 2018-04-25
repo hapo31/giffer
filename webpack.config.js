@@ -17,6 +17,16 @@ module.exports = {
       chunks: "initial"
     }
   },
+  module: {
+    rules: [
+      {
+        test: /\.css/,
+        use: [
+          "style-loader", "css-loader"
+        ]
+      }
+    ]
+  },
   plugins: [
     new CopyWebpackPlugin([
       {
