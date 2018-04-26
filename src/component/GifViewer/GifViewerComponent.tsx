@@ -36,7 +36,11 @@ export default class GifViewerComponent extends React.Component<
       <>
         <div className="imageList">
           {srcList.map((v, i) => (
-            <Draggable key={`imageList-${i}`} onDragging={this.onDragging(i)}>
+            <Draggable
+              className="imageList-items"
+              key={`imageList-${i}`}
+              onDragging={this.onDragging(i)}
+            >
               <img
                 src={v}
                 width={IMAGE_PREVIEW_SIZE}
