@@ -16,9 +16,10 @@ http
         res.end(file);
       });
     } else {
-      fs.readFile(`.${path.path}`, (err, file) => {
+      const filePath = decodeURIComponent(path.path);
+      fs.readFile(`.${filePath}`, (err, file) => {
         if (err) {
-          console.log(`${path.path} notfound.`);
+          console.log(`${filePath} notfound.`);
           res.end();
           return;
         }

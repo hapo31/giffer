@@ -20,6 +20,14 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.(tsx|ts)$/,
+        use: ["ts-loader"],
+        include: [
+          path.resolve(__dirname, "src"),
+          path.resolve(__dirname, "node_modules")
+        ]
+      },
+      {
         test: /\.scss/,
         use: [
           "style-loader",
